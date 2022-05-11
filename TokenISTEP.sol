@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
@@ -73,7 +72,7 @@ contract TokenISTEP is OwnableUpgradeable, ERC20Upgradeable {
     ) public virtual override returns (bool) {
         if (unlockPercent < 100) {
             uint256 locked = (lockBalances[from] * (100 - unlockPercent)) / 100;
-            require(balanceOf(from) - locked > amount, "Unlocked balance is not enough");
+            require(balanceOf(from) - locked >= amount, "Unlocked balance is not enough");
         }
 
         address spender = _msgSender();
@@ -99,7 +98,7 @@ contract TokenISTEP is OwnableUpgradeable, ERC20Upgradeable {
 
         uint256 locked = (lockBalances[from] * (100 - unlockPercent)) / 100;
         if (locked > amount) {
-            lockBalances[from] = lockBalances[from] - amount;
+            lockBalances[from] = (locked - amount) * 100 / unlockPercent;
         } else {
             lockBalances[from] = 0;
         }
