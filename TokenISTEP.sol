@@ -47,14 +47,6 @@ contract TokenISTEP is OwnableUpgradeable, ERC20Upgradeable {
         unlockPercent = percent;
     }
 
-    function mint(address account, uint256 amount) external onlyOperatorAccount {
-        _mint(account, amount);
-    }
-
-    function burn(address account, uint256 amount) external onlyOperatorAccount {
-        _burn(account, amount);
-    }
-
     function transfer(address to, uint256 amount) public virtual override returns (bool) {
         if (unlockPercent < 100) {
             uint256 locked = (lockBalances[msg.sender] * (100 - unlockPercent)) / 100;
